@@ -1,0 +1,1973 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Possession"</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --pink: #ff6eb4;
+  --purple: #a855f7;
+  --blue: #60a5fa;
+  --gold: #fbbf24;
+  --dark: #0a0510;
+  --glass: rgba(255, 255, 255, 0.06);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  color: #fff;
+  background: var(--dark);
+  font-family: 'Noto Sans Thai', sans-serif;
+  scroll-behavior: smooth;
+}
+
+#bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -2;
+}
+
+#bgOverlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.18) 0%, rgba(10, 5, 16, 0.85) 60%);
+  z-index: -2;
+}
+
+#particles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+/* top bar */
+#manualBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(20, 8, 40, 0.96), rgba(10, 4, 22, 0.98));
+  border-bottom: 1px solid rgba(255, 110, 180, 0.18);
+  padding: 22px 32px 26px;
+  overflow: hidden;
+  /* transition สำหรับ shrink */
+  transition: padding 0.55s cubic-bezier(0.22,1,0.36,1),
+              background 0.55s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.55s cubic-bezier(0.22,1,0.36,1);
+  /* entry animation */
+  animation: bannerSlideIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes bannerSlideIn {
+  from { transform: translateY(-110%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* shimmer line วิ่งซ้าย→ขวา */
+#manualBar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; right: auto;
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 110, 180, 0.9), rgba(168, 85, 247, 0.9), transparent);
+  animation: shimmerLine 3.5s ease-in-out infinite;
+}
+
+@keyframes shimmerLine {
+  0%   { left: -60%; }
+  100% { left: 130%; }
+}
+
+#manualBar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.08) 0%, transparent 65%);
+  pointer-events: none;
+  animation: bannerGlow 4s ease-in-out infinite;
+}
+
+@keyframes bannerGlow {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1.4; }
+}
+
+/* ── Shrink state ── */
+#manualBar {
+  /* height จะถูก animate ผ่าน padding */
+}
+
+.manual-title-row,
+.manual-grid {
+  overflow: hidden;
+  max-height: 500px;
+  opacity: 1;
+  transition: max-height 0.55s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.45s cubic-bezier(0.22,1,0.36,1),
+              margin-bottom 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+
+#manualBar.shrunk .manual-title-row {
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+  pointer-events: none;
+}
+
+#manualBar.shrunk .manual-grid {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#manualBar.shrunk {
+  padding: 8px 32px 10px;
+  background: linear-gradient(180deg, rgba(14, 5, 28, 0.98), rgba(8, 3, 18, 0.99));
+  box-shadow: 0 4px 32px rgba(255, 110, 180, 0.12), 0 0 0 1px rgba(255,110,180,0.1);
+}
+
+/* แถบบางๆ */
+#barMini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-height 0.5s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.45s cubic-bezier(0.22,1,0.36,1);
+}
+#manualBar.shrunk #barMini {
+  max-height: 60px;
+  opacity: 1;
+  pointer-events: auto;
+}
+#barMini .mini-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--pink), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+#barMini .mini-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--pink);
+  animation: dotPulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 6px var(--pink); }
+  50%       { opacity: 0.5; transform: scale(0.6); box-shadow: none; }
+}
+
+
+.manual-inner {
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.manual-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  transition: opacity 0.3s ease;
+}
+
+.manual-badge {
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  padding: 5px 16px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-family: 'Cinzel', serif;
+  box-shadow: 0 0 16px rgba(255, 110, 180, 0.3);
+}
+
+.manual-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #fff, rgba(255, 110, 180, 0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.06em;
+}
+
+.manual-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.manual-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s, background 0.25s, transform 0.2s;
+  cursor: default;
+}
+
+.manual-box:hover {
+  border-color: rgba(255, 110, 180, 0.35);
+  background: rgba(255, 110, 180, 0.07);
+  transform: translateY(-2px);
+}
+
+.manual-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.04) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.45s;
+}
+
+.manual-box:hover::before {
+  transform: translateX(100%);
+}
+
+.manual-box-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(255, 110, 180, 0.25), rgba(168, 85, 247, 0.25));
+  border: 1px solid rgba(255, 110, 180, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: var(--pink);
+}
+
+.manual-box-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 3px;
+  letter-spacing: 0.02em;
+}
+
+.manual-box-desc {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.55;
+}
+
+.manual-box-desc strong {
+  color: var(--pink);
+}
+
+.manual-box:nth-child(1) { border-color: rgba(96, 165, 250, 0.15); }
+.manual-box:nth-child(1):hover { border-color: rgba(96, 165, 250, 0.4); background: rgba(96, 165, 250, 0.06); }
+.manual-box:nth-child(1) .manual-box-num { background: rgba(96, 165, 250, 0.2); border-color: rgba(96, 165, 250, 0.35); color: #93c5fd; }
+
+.manual-box:nth-child(2) { border-color: rgba(251, 191, 36, 0.15); }
+.manual-box:nth-child(2):hover { border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.06); }
+.manual-box:nth-child(2) .manual-box-num { background: rgba(251, 191, 36, 0.2); border-color: rgba(251, 191, 36, 0.35); color: #fde047; }
+
+.manual-box:nth-child(3) { border-color: rgba(34, 197, 94, 0.15); }
+.manual-box:nth-child(3):hover { border-color: rgba(34, 197, 94, 0.4); background: rgba(34, 197, 94, 0.06); }
+.manual-box:nth-child(3) .manual-box-num { background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.35); color: #86efac; }
+
+.manual-box:nth-child(4) { border-color: rgba(239, 68, 68, 0.15); }
+.manual-box:nth-child(4):hover { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.06); }
+.manual-box:nth-child(4) .manual-box-num { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.35); color: #fca5a5; }
+
+.manual-box:nth-child(5) { border-color: rgba(168, 85, 247, 0.2); }
+.manual-box:nth-child(5):hover { border-color: rgba(168, 85, 247, 0.45); background: rgba(168, 85, 247, 0.07); }
+.manual-box:nth-child(5) .manual-box-num { background: rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.4); color: #d8b4fe; }
+
+.manual-box:nth-child(6) { border-color: rgba(255, 110, 180, 0.2); }
+.manual-box:nth-child(6):hover { border-color: rgba(255, 110, 180, 0.45); background: rgba(255, 110, 180, 0.07); }
+.manual-box:nth-child(6) .manual-box-num { background: rgba(255, 110, 180, 0.2); border-color: rgba(255, 110, 180, 0.4); color: var(--pink); }
+
+.manual-box:nth-child(7) { border-color: rgba(249, 115, 22, 0.15); }
+.manual-box:nth-child(7):hover { border-color: rgba(249, 115, 22, 0.4); background: rgba(249, 115, 22, 0.06); }
+.manual-box:nth-child(7) .manual-box-num { background: rgba(249, 115, 22, 0.2); border-color: rgba(249, 115, 22, 0.35); color: #fdba74; }
+
+.manual-grid-turn {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.turn-box {
+  border-color: rgba(96, 165, 250, 0.12) !important;
+}
+
+.turn-box:hover {
+  border-color: rgba(96, 165, 250, 0.35) !important;
+  background: rgba(96, 165, 250, 0.05) !important;
+}
+
+.turn-num {
+  font-size: 0.85rem !important;
+  font-family: 'Noto Sans Thai', sans-serif !important;
+}
+
+/* logo */
+#logo {
+  display: block;
+  margin: 24px auto 18px;
+  width: 22%;
+  max-width: 260px;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 30px rgba(255, 110, 180, 0.4));
+  animation: logoPulse 4s ease infinite;
+  transition: width 0.5s cubic-bezier(0.22,1,0.36,1),
+              max-width 0.5s cubic-bezier(0.22,1,0.36,1),
+              margin 0.5s cubic-bezier(0.22,1,0.36,1),
+              transform 0.5s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.5s ease;
+}
+
+/* logo sticky mini state */
+#logo.logo-sticky {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  max-width: 80px;
+  margin: 0;
+  z-index: 11;
+  animation: logoPulse 4s ease infinite;
+}
+
+@keyframes logoPulse {
+  0%, 100% { filter: drop-shadow(0 0 30px rgba(255, 110, 180, 0.4)); }
+  50%       { filter: drop-shadow(0 0 55px rgba(168, 85, 247, 0.6)); }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* gallery */
+.gallery {
+  column-count: 4;
+  column-gap: 20px;
+}
+
+@media (max-width: 1000px) { .gallery { column-count: 3; } }
+@media (max-width: 680px)  { .gallery { column-count: 2; } }
+
+/* cards */
+.card-img {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  perspective: 1200px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardIn 0.6s ease forwards;
+}
+
+@keyframes cardIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 20px;
+}
+
+.card-inner.flip {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  backface-visibility: hidden;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.card-front {
+  position: relative;
+}
+
+.card-front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.7) 100%);
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card-img:hover .card-front::after {
+  opacity: 1;
+}
+
+.card-front img {
+  width: 100%;
+  display: block;
+  border-radius: 20px;
+  transition: transform 0.4s ease;
+}
+
+.card-img:hover .card-front img {
+  transform: scale(1.04);
+}
+
+.card-name-tag {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 16px 14px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  z-index: 2;
+  transform: translateY(4px);
+  opacity: 0;
+  transition: all 0.3s;
+}
+
+.card-img:hover .card-name-tag {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.card-back {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, rgba(20, 8, 40, 0.96), rgba(8, 4, 20, 0.98));
+  border: 1px solid rgba(255, 110, 180, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transform: rotateY(180deg);
+  padding: 16px;
+  text-align: center;
+}
+
+.card-back-icon { font-size: 2rem; margin-bottom: 4px; }
+
+.card-back-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--pink);
+  letter-spacing: 0.08em;
+}
+
+.card-back-hint {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 110, 180, 0.2);
+  border-radius: 20px;
+  padding: 3px 10px;
+  margin-top: 4px;
+}
+
+.card-img:active .card-inner {
+  box-shadow: 0 0 30px rgba(255, 110, 180, 0.5);
+}
+
+/* character modal */
+#charModal {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+}
+
+#charModal.open { display: flex; }
+
+#charBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 2, 12, 0.88);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#charModal.open #charBackdrop { opacity: 1; }
+
+#charBox {
+  position: relative;
+  width: min(980px, 96vw);
+  max-height: 92vh;
+  display: flex;
+  gap: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 110, 180, 0.2);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 40px 120px rgba(0, 0, 0, 0.8),
+    0 0 80px rgba(168, 85, 247, 0.15);
+  opacity: 0;
+  transform: rotateY(-15deg) rotateX(6deg) translateZ(-60px) scale(0.88);
+  transition: all 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+}
+
+#charModal.open #charBox {
+  opacity: 1;
+  transform: rotateY(0deg) rotateX(0deg) translateZ(0) scale(1);
+}
+
+#charImgPane {
+  flex: 0 0 42%;
+  position: relative;
+  overflow: hidden;
+  background: #040210;
+  min-height: 520px;
+}
+
+#charImgPane::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(255, 110, 180, 0.25) 0%, transparent 65%),
+    radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.18) 0%, transparent 55%);
+  z-index: 1;
+}
+
+#charRing {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 110, 180, 0.15);
+  z-index: 0;
+}
+
+#charRing::before, #charRing::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1px solid rgba(168, 85, 247, 0.1);
+  animation: ringPulse 3s ease infinite;
+}
+
+#charRing::after {
+  inset: -44px;
+  border-color: rgba(255, 110, 180, 0.07);
+  animation-delay: 1.5s;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.05); opacity: 1; }
+}
+
+#charImgPane::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.012) 3px,
+    rgba(255, 255, 255, 0.012) 4px
+  );
+  z-index: 3;
+  pointer-events: none;
+}
+
+#charMainImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  position: relative;
+  z-index: 2;
+  filter: saturate(1.15) contrast(1.05);
+  transition: transform 0.6s ease;
+  transform: scale(1.02);
+}
+
+#charModal.open #charMainImg { transform: scale(1); }
+
+.img-stat {
+  position: absolute;
+  z-index: 4;
+  background: rgba(10, 5, 20, 0.82);
+  border: 1px solid rgba(255, 110, 180, 0.3);
+  border-radius: 10px;
+  padding: 5px 11px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  backdrop-filter: blur(6px);
+  animation: floatChip 3s ease infinite;
+}
+
+.img-stat:nth-child(1) { top: 20px; left: 14px; animation-delay: 0s; border-color: rgba(249,115,22,0.4); }
+.img-stat:nth-child(1) .img-stat-val { color: #fb923c; }
+.img-stat:nth-child(2) { top: 20px; right: 14px; animation-delay: 0.8s; border-color: rgba(34,197,94,0.4); }
+.img-stat:nth-child(2) .img-stat-val { color: #4ade80; }
+.img-stat:nth-child(3) { bottom: 24px; left: 14px; animation-delay: 1.6s; border-color: rgba(96,165,250,0.4); }
+.img-stat:nth-child(3) .img-stat-val { color: #93c5fd; }
+.img-stat:nth-child(4) { bottom: 24px; right: 14px; animation-delay: 2.4s; border-color: rgba(168,85,247,0.4); }
+.img-stat:nth-child(4) .img-stat-val { color: #d8b4fe; }
+
+@keyframes floatChip {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+.img-stat-label { color: rgba(255, 255, 255, 0.4); font-size: 0.58rem; display: block; margin-bottom: 1px; }
+.img-stat-val   { color: var(--pink); }
+
+#charInfoPane {
+  flex: 1;
+  background: linear-gradient(160deg, rgba(14, 7, 30, 0.97), rgba(6, 3, 15, 0.99));
+  padding: 36px 36px 32px;
+  overflow-y: auto;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 110, 180, 0.3) transparent;
+}
+
+#charInfoPane::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 120px;
+  height: 120px;
+  border-top: 1px solid rgba(255, 110, 180, 0.15);
+  border-right: 1px solid rgba(255, 110, 180, 0.15);
+  border-radius: 0 28px 0 0;
+  pointer-events: none;
+}
+
+#charClose {
+  position: absolute;
+  top: 18px; right: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 17px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+#charClose:hover {
+  background: rgba(255, 110, 180, 0.25);
+  border-color: rgba(255, 110, 180, 0.4);
+  color: #fff;
+}
+
+.char-class {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--purple);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.char-class::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--purple));
+}
+
+#charName {
+  font-family: 'Cinzel', serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fff 0%, var(--pink) 50%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.5s 0.2s ease;
+}
+
+#charModal.open #charName { opacity: 1; transform: translateX(0); }
+
+.bio-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 14px 0 24px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s 0.3s ease;
+}
+
+#charModal.open .bio-tags { opacity: 1; transform: translateY(0); }
+
+.bio-tag {
+  padding: 4px 13px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.tag-date { color: #93c5fd; border-color: rgba(147, 197, 253, 0.3); background: rgba(147, 197, 253, 0.08); }
+.tag-age  { color: #86efac; border-color: rgba(134, 239, 172, 0.3); background: rgba(134, 239, 172, 0.08); }
+.tag-type { color: var(--pink); border-color: rgba(255, 110, 180, 0.3); background: rgba(255, 110, 180, 0.08); }
+
+.char-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 110, 180, 0.3), rgba(168, 85, 247, 0.3), transparent);
+  margin: 20px 0;
+  opacity: 0;
+  transition: opacity 0.5s 0.4s;
+}
+
+#charModal.open .char-divider { opacity: 1; }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 22px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.5s 0.35s ease;
+}
+
+#charModal.open .info-grid { opacity: 1; transform: translateY(0); }
+
+.info-cell {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 13px;
+  padding: 12px 15px;
+  transition: border-color 0.2s;
+}
+
+.info-cell:hover { border-color: rgba(255, 110, 180, 0.25); }
+
+.info-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.lore-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.5s 0.45s;
+}
+
+#charModal.open .lore-title { opacity: 1; }
+
+.lore-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.25), transparent);
+}
+
+.lore-text {
+  font-size: 0.85rem;
+  line-height: 1.82;
+  color: rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 18px 20px;
+  position: relative;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: all 0.5s 0.5s ease;
+}
+
+#charModal.open .lore-text { opacity: 1; transform: translateY(0); }
+
+.lore-text::before {
+  content: '"';
+  position: absolute;
+  top: -10px; left: 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 3rem;
+  color: rgba(255, 110, 180, 0.25);
+  line-height: 1;
+}
+
+.stat-section {
+  margin-top: 20px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: all 0.5s 0.55s ease;
+}
+
+#charModal.open .stat-section { opacity: 1; transform: translateY(0); }
+
+.stat-row { margin-bottom: 10px; }
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  margin-bottom: 5px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+}
+
+.stat-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--pink), var(--purple));
+  width: 0%;
+  transition: width 1s 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 0 8px rgba(255, 110, 180, 0.4);
+}
+
+.stat-row[data-stat="ATK"] .stat-fill { background: linear-gradient(90deg, #ff6eb4, #f97316); box-shadow: 0 0 8px rgba(249,115,22,0.4); }
+.stat-row[data-stat="HP"]  .stat-fill { background: linear-gradient(90deg, #22c55e, #16a34a); box-shadow: 0 0 8px rgba(34,197,94,0.4); }
+.stat-row[data-stat="RUN"] .stat-fill { background: linear-gradient(90deg, #60a5fa, #3b82f6); box-shadow: 0 0 8px rgba(96,165,250,0.4); }
+.stat-row[data-stat="SPELL"] .stat-fill { background: linear-gradient(90deg, #a855f7, #7c3aed); box-shadow: 0 0 8px rgba(168,85,247,0.4); }
+
+#charModal.open .stat-fill { width: var(--w); }
+
+/* sakura + music */
+.sakura { position: fixed; top: -60px; pointer-events: none; z-index: 5; }
+
+.music-btn {
+  position: fixed;
+  bottom: 25px; right: 25px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  font-size: 20px;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+
+.music-btn:hover {
+  background: rgba(255, 110, 180, 0.2);
+  border-color: rgba(255, 110, 180, 0.4);
+}
+
+/* skill section */
+#skillSection {
+  margin-top: 20px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: all 0.5s 0.6s ease;
+}
+
+#charModal.open #skillSection {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.skill-box {
+  background: rgba(168, 85, 247, 0.06);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-top: 8px;
+}
+
+.skill-ui-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.skill-chip {
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.skill-chip span {
+  color: var(--pink);
+}
+
+.skill-desc {
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.skill-quote {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: rgba(251, 191, 36, 0.6);
+  border-left: 2px solid rgba(251, 191, 36, 0.3);
+  padding-left: 10px;
+}
+
+/* ui stat bar ด้านบน */
+.ui-stat-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 20px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.5s 0.28s ease;
+}
+
+#charModal.open .ui-stat-row {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ui-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 52px;
+}
+
+.ui-chip-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+}
+
+.ui-chip-val {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--pink);
+  font-family: 'Cinzel', serif;
+}
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+<div id="bgOverlay"></div>
+<canvas id="particles"></canvas>
+
+<audio id="bgm" loop><source src="" id="bgmSrc"></audio>
+
+<!-- คู่มือ -->
+<div id="manualBar">
+  <div class="manual-inner">
+
+    <!-- mini bar (แสดงเมื่อ shrunk) -->
+    <div id="barMini">
+      <div class="mini-dot"></div>
+      <div class="mini-badge">✦Possession" — คู่มือการเล่น ✦</div>
+    </div>
+
+    <div class="manual-title-row">
+      <div class="manual-badge">📖 คู่มือ</div>
+      <div class="manual-heading">วิธีเล่น Possession</div>
+    </div>
+
+    <div class="manual-grid">
+      <div class="manual-box">
+        <div class="manual-box-num">1</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">⚔️ โจมตี</div>
+          <div class="manual-box-desc">ใช้แต้ม <strong>ATK</strong> ในการโจมตี ยิ่งใช้มาก ดาเมจยิ่งสูง</div>
+        </div>
+      </div>
+      <div class="manual-box">
+        <div class="manual-box-num">2</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🛡️ ป้องกัน</div>
+          <div class="manual-box-desc">ใช้แต้ม <strong>DEF</strong> รับดาเมจ — ป้องกัน <strong>1 DEF</strong> ต่อดาเมจ <strong>1 หน่วย</strong></div>
+        </div>
+      </div>
+      <div class="manual-box">
+        <div class="manual-box-num">3</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🚶 เดิน</div>
+          <div class="manual-box-desc">ใช้แต้ม <strong>RUN</strong> เดิน — <strong>1 RUN</strong> ต่อ <strong>1 ช่อง</strong></div>
+        </div>
+      </div>
+      <div class="manual-box">
+        <div class="manual-box-num">4</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">✨ สกิล</div>
+          <div class="manual-box-desc">ใช้แต้ม <strong>SPELL</strong> ในการปลดปล่อยสกิล แต่ละสกิลมีต้นทุน SPELL ต่างกัน</div>
+        </div>
+      </div>
+      <div class="manual-box">
+        <div class="manual-box-num">5</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🎲 ระบบแต้ม</div>
+          <div class="manual-box-desc">ทอยเต๋าต้นเทิร์นเพื่อรับแต้ม <strong>ATK · DEF · RUN · SPELL</strong> แล้วจัดสรรตามกลยุทธ์</div>
+        </div>
+      </div>
+      <div class="manual-box">
+        <div class="manual-box-num">6</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🏰 โจมตีป้อม</div>
+          <div class="manual-box-desc">ใช้ <strong>ATK</strong> โจมตีป้อมของคู่ต่อสู้ให้เหลือ <strong>0</strong> เพื่อชนะ</div>
+        </div>
+      </div>
+      <div class="manual-box">
+        <div class="manual-box-num">7</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🏆 เงื่อนไขชนะ</div>
+          <div class="manual-box-desc">ทำลาย <strong>ป้อมของคู่ต่อสู้</strong> ให้เหลือ <strong>HP = 0</strong> เพื่อคว้าชัยชนะ!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="manual-title-row" style="margin-top: 16px;">
+      <div class="manual-badge" style="background: linear-gradient(135deg, #60a5fa, #a855f7);">🔄 ลำดับเทิร์น</div>
+      <div class="manual-heading">ขั้นตอนในแต่ละเทิร์น</div>
+    </div>
+
+    <div class="manual-grid manual-grid-turn">
+      <div class="manual-box turn-box">
+        <div class="manual-box-num turn-num" style="background: rgba(96,165,250,.2); border-color: rgba(96,165,250,.4); color: #93c5fd;">①</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🗺️ วาง Platform</div>
+          <div class="manual-box-desc">ผู้เล่นวาง <strong>Platform</strong> ลงบนแผนที่ก่อนเริ่มเทิร์น</div>
+        </div>
+      </div>
+      <div class="manual-box turn-box">
+        <div class="manual-box-num turn-num" style="background: rgba(251,191,36,.2); border-color: rgba(251,191,36,.4); color: #fde047;">②</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🎲 ทอยเต๋า</div>
+          <div class="manual-box-desc">ทอยเต๋าเพื่อรับแต้ม <strong>ATK · DEF · RUN · SPELL</strong></div>
+        </div>
+      </div>
+      <div class="manual-box turn-box">
+        <div class="manual-box-num turn-num" style="background: rgba(34,197,94,.2); border-color: rgba(34,197,94,.4); color: #86efac;">③</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🃏 จั่วการ์ด</div>
+          <div class="manual-box-desc">จั่วการ์ดจากกอง เพื่อนำไปใช้ในเทิร์น</div>
+        </div>
+      </div>
+      <div class="manual-box turn-box">
+        <div class="manual-box-num turn-num" style="background: rgba(168,85,247,.2); border-color: rgba(168,85,247,.4); color: #d8b4fe;">④</div>
+        <div class="manual-box-body">
+          <div class="manual-box-title">🎮 ปฏิบัติการ</div>
+          <div class="manual-box-desc">เดิน <strong>(RUN)</strong> · โจมตี <strong>(ATK)</strong> · สกิล <strong>(SPELL)</strong> โดยใช้แต้มที่ทอยได้</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- โลโก้ -->
+<img src="" id="logo" alt="Logo">
+
+<!-- แกลเลอรี -->
+<div style="max-width: 1200px; margin: auto; position: relative; z-index: 2; padding: 0 20px 60px;">
+  <div class="glass">
+    <div class="gallery" id="gallery"></div>
+  </div>
+</div>
+
+<!-- modal ตัวละคร -->
+<div id="charModal">
+  <div id="charBackdrop"></div>
+  <div id="charBox">
+
+    <div id="charImgPane">
+      <div id="charRing"></div>
+
+      <div class="img-stat">
+        <span class="img-stat-label">ATK</span>
+        <span class="img-stat-val" id="chipAtk">—</span>
+      </div>
+      <div class="img-stat">
+        <span class="img-stat-label">HP</span>
+        <span class="img-stat-val" id="chipHp">—</span>
+      </div>
+      <div class="img-stat">
+        <span class="img-stat-label">RUN</span>
+        <span class="img-stat-val" id="chipRun">—</span>
+      </div>
+      <div class="img-stat">
+        <span class="img-stat-label">SPELL</span>
+        <span class="img-stat-val" id="chipSpell">—</span>
+      </div>
+
+      <img id="charMainImg" src="" alt="">
+    </div>
+
+    <div id="charInfoPane">
+      <button id="charClose">✕</button>
+
+      <div class="char-class" id="charClassLabel">CHARACTER FILE</div>
+      <div id="charName">—</div>
+
+      <div class="bio-tags" id="bioTags"></div>
+
+      <div class="char-divider"></div>
+
+      <div class="info-grid" id="infoGrid"></div>
+
+      <div class="lore-title">✦ ประวัติ</div>
+      <div class="lore-text" id="charLore">—</div>
+
+      <div class="stat-section" id="statSection"></div>
+
+      <div id="skillSection"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ปุ่มเพลง -->
+<div class="music-btn" id="musicBtn">▶</div>
+
+<script>
+
+// ═══════════════════════════════════════
+//  ส่วนที่แก้ไขได้ — แก้ตรงนี้เลย
+// ═══════════════════════════════════════
+
+// [A] รูปพื้นหลัง & โลโก้
+const BG_IMAGE = "IG/13.png"
+const LOGO_SRC = "IG/13.png"
+
+
+document.getElementById("bg").style.backgroundImage = `url("${BG_IMAGE}")`
+document.getElementById("logo").src = LOGO_SRC
+
+// [B] เพลงประกอบ
+const MUSIC_SRC = "Music/music.mp3"
+document.getElementById("bgmSrc").src = MUSIC_SRC
+
+// [C] เอฟเฟกต์
+const STAR_COUNT      = 200     // จำนวนดาว
+const SAKURA_INTERVAL = 600     // ความถี่ maze glyph (ms)
+const SAKURA_EMOJI    = "🌸"   // อีโมจิ
+
+// [D] รูปการ์ดตัวละคร (ต้องตรงลำดับกับ CHARACTER_DATA)
+const images = [
+  "IG/z23 ghost lady.png",
+  "IG/z26 hassan i sabbah.png",
+  "IG/z27 lupin.png",
+  "IG/z28 simo hayha.png",
+  "IG/z30 Soohnthorne Phuu.png",
+  "IG/z31 Apaimanee.png",
+  "IG/z1 phenelope.png",
+  "IG/z3 mary read.png",
+  "IG/z5.png",
+  "IG/z6 alice deane.png",
+  "IG/z7 thomas j ward.png",
+  "IG/z9 merlin.png",
+  "IG/z12 musashi.png",
+  "IG/z14 richard.png",
+  "IG/z15 hougan.png",
+  "IG/z16bluetooth.png",
+  "IG/z17 ziito.png",
+  "IG/z18 Drona.png",
+  "IG/z21 chalawan.png",
+  "IG/z22 togo.png",
+  "IG/dragon1.png",
+  "IG/rusty.png",
+  "IG/z2 odysseus.png",
+  "IG/z4blackbeard.png",
+  "IG/z10 vlad dracula tepes.png",
+
+]
+
+// [D] ข้อมูลตัวละคร
+const CHARACTER_DATA = [
+  {
+    name: "Ghost Lady",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "วิญญาณหญิงผู้ล่องลอยระหว่างโลกมนุษย์กับโลกวิญญาณ เธอแสวงหาสิ่งที่สูญเสียไปนานแล้ว และจะไม่หยุดจนกว่าจะได้มันคืน",
+    ui: { atk: 1, hp: 1, run: 2, spell: 0 },
+    skill: "(ติดตัว) โหงพรายสามารถเคลื่อนที่ผ่านทะลุยูนิตได้ทุกตัว แต่ไม่สามารถเคลื่อนที่ในช่องว่างได้ เมื่อโหงพรายทำการโจมตี จะลด ❤️ ของตนเองลง 1 หน่วย",
+    quote: "the memories i couldn't make haunt me.",
+    stats: [
+      { name: "ATK", val: 1 },
+      { name: "HP",  val: 1 },
+      { name: "RUN", val: 2 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Hassan-i Sabbah",
+    born: "ประมาณ ค.ศ. 1050",
+    age: "74",
+    lore: "ราชาแห่งนักฆ่า ผู้ก่อตั้งลัทธิ Assassin บนภูเขาอาลามุต คำสั่งของเขาคือความตาย และผู้รับคำสั่งไม่เคยล้มเหลว",
+    ui: { atk: 2, hp: 3, run: 1, spell: 4 },
+    skill: "ใช้ 🌀 4 หน่วยเพื่อสร้างความเสียหาย 4 หน่วยกับศัตรูในระยะประชิด 1 ตัว หากสังหารศัตรูด้วยสกิลได้สำเร็จจะสามารถเคลื่อนที่ต่อไปได้อีก 5 ช่อง และหลังจากนี้สกิลของเขาจะไม่สามารถป้องกันได้จนกว่าเขาจะถูกโจมตี",
+    quote: "Nothing is true everything is permitted.",
+    stats: [
+      { name: "ATK", val: 2 },
+      { name: "HP",  val: 3},
+      { name: "RUN", val: 1},
+      { name: "SPELL", val: 4}
+    ]
+  },
+  {
+    name: "Arsène Lupin",
+    born: "ไม่ทราบ",
+    age: "30",
+    lore: "สุภาพบุรุษโจรผู้เลื่องชื่อ ขโมยจากคนรวยด้วยสติปัญญาและเสน่ห์ ไม่มีตำรวจคนใดสามารถจับเขาได้ และไม่มีกุญแจใดที่เขาเปิดไม่ออก",
+    ui: { atk: 2, hp: 2, run: 2, spell: 6 },
+    skill: "ใช้ได้ทีละครั้งและเมื่อยืนติดกับศัตรูเท่านั้น ใช้ 🌀 6 ทำการจำลองร่างของศัตรูขึ้นมาแทนที่ศัตรู 1 ตัว ร่างนี้จะมีค่าสถานะเท่าลูแปง ทั้ง 2 ฝ่าย จะควบคุมได้ทั้งสอง ยูนิต มีแค่ผู้ผั้งผู้ใช้เท่านั้นที่รู้ตัวจริง หากตัวปลอมถูกทำลาย จะขโมยทรัพยากรใดๆ ก็ได้ของศัตรู 6 หน่วย",
+    quote: "the lion lives in heart of everyman.",
+    stats: [
+      { name: "ATK", val: 1 },
+      { name: "HP",  val: 2 },
+      { name: "RUN", val: 2 },
+      { name: "SPELL", val: 6 }
+    ]
+  },
+  {
+    name: "Simo Häyhä",
+    born: "17 ธันวาคม",
+    age: "???",
+    lore: "'White Death' มือปืนที่ดีที่สุดในประวัติศาสตร์แห่งฟินแลนด์ ซ่อนตัวในหิมะขาวและคร่าชีวิตศัตรูด้วยทุกนัดที่ยิง",
+    ui: { atk: 2, hp: 1, run: 1, range: 6, spell: 6 },
+    skill: "ใช้ 🌀 6 หน่วย วางลงบนการ์ด เพื่อตั้งท่าซุ่มยิงเป็นเส้นตรงจนสุดระยะ สกิลนี้จะทำงานต่อเมื่อมีศัตรูเคลื่อนที่ผ่านเส้นทางการยิงเท่านั้น สร้างความเสียหาย 6 หน่วยให้กับศัตรู สามารถวางสกิลลงบนการ์ดซ้ำกี่ครั้งก็ได้",
+    quote: "I did what i was told, as well as i could.",
+    stats: [
+      { name: "ATK", val: 6 },
+      { name: "HP",  val: 6 },
+      { name: "RUN", val: 6 },
+      { name: "SPELL", val: 6 }
+    ]
+  },
+  {
+    name: "สุนทรภู่",
+    born: "26 มิถุนายน",
+    age: "???",
+    lore: "กวีเอกแห่งรัตนโกสินทร์ ปากกาของเขาคมกว่าดาบ คำกลอนของเขาสั่นสะเทือนหัวใจผู้อ่านข้ามกาลเวลา",
+    ui: { atk: 2, hp: 4, run: 1, spell: 6 },
+    skill: "เมื่อลงสนาม จะมีเงื่อนไขการกิจดังนี้ ทุกข้อนับเป็นการใช้สกิล จึงทำได้ทีละturn หากทุกข้อสำเร็จ เพิ่ม ⚔️ ❤️ + 1\n1. ใช้ 🌀 6 อัญเชิญยูนิตที่ตายไปแล้วมาให้เป็น โหงพราย\n2. ไอเทมที่มีอยู่จะกลายเป็น คาบฟ้าฟื้น 1 ชิ้น\n3. สังเวยยูนิตเพศหญิง 1 ตัว เพื่ออัญเชิญ กุมารทอง\n4. Stun ตัวเอง ใน 1 เทิร์นตัวเอง เพื่ออัญเชิญ บ้าสีหมอก",
+    quote: "it's deep in your blood, go and take it.",
+    stats: [
+      { name: "ATK", val: 3 },
+      { name: "HP",  val: 5 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 6 }
+    ]
+  },
+  {
+    name: "พระอภัยมณี",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "เจ้าชายผู้เชี่ยวชาญปี่วิเศษ เสียงปี่ของเขาสามารถทำให้ศัตรูหลับใหลหรือหัวใจแตกสลายได้ นักผจญภัยผู้ข้ามทะเลเพื่อแสวงหาอิสรภาพ",
+    ui: { atk: 1, hp: 2, run: 1, range: 4, spell: "3-6-12" },
+    skill: "พระอภัยมณี มี 3 สกิล แยกตาม 🌀 ที่ใช้\n- 3 🌀 เพิ่ม ⚔️ 2 หน่วย ให้พันธมิตร 1 ยูนิตในเทิร์นนี้\n- 6 🌀 Stun ยูนิตใดก็ได้ 1 ตัว และยูนิตที่อยู่ใกล้เป้าหมายที่สุด 2 ตัวเป็นเวลา 2 เทิร์น เริ่มการ Stun และการนับจากเทิร์นของศัตรูเท่านั้น\n- 12 🌀 สังหาร ยูนิตที่ไม่ใช่Crystal 1 ตัว ในระยะ 8 ช่องเดิน",
+    quote: "Even if this world comes to an end i'll still spend eternity with you.",
+    stats: [
+      { name: "ATK", val: 6 },
+      { name: "HP",  val: 6 },
+      { name: "RUN", val: 6 },
+      { name: "SPELL", val: 12 }
+    ]
+  },
+  {
+    name: "Penelope",
+    born: "15 มีนาคม",
+    age: "24",
+    lore: "ราชินีผู้เฝ้ารอ มีชื่อเสียงด้านความอดทนและปัญญาที่หาตัวจับยาก เธอทอผ้าเพื่อถ่วงเวลา และรู้ว่าสงครามแท้จริงไม่ได้สู้ด้วยดาบ แต่สู้ด้วยสติและความเชื่อมั่น",
+    ui: { atk: 2, hp: 2, run: 2, spell: 4 },
+    skill: "หากมี โอดิสเซียส อยู่ในสนามอยู่แล้ว เธอจะสามารถใช้ 🌀 4 หน่วย เพื่อเพิ่ม ⚔️ / ❤️ เป็น 4/4 ให้กับทั้ง เพเนโลพี และ โอดิสเซียส โดยไม่สนว่าทั้งสองอยู่ฝ่ายไหน",
+    quote: "your sword is mine, my heart is your.",
+    stats: [
+      { name: "ATK", val: 4 },
+      { name: "HP",  val: 7 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 4 }
+    ]
+  },
+  {
+    name: "Mary Read",
+    born: "? พฤษภาคม",
+    age: "28",
+    lore: "โจรสลัดหญิงผู้ปลอมตัวเป็นชายตลอดชีวิต กล้าหาญและดุดัน เธอขึ้นชื่อว่าไม่เคยยอมแพ้ในการดวล แม้ตกอยู่ในสถานการณ์ที่สิ้นหวังที่สุด",
+    ui: { atk: 1, hp: 2, run: 2, spell: 6 },
+    skill: "ใช้ 🌀 6 หน่วย เพื่อเรียกยูนิตพันธมิตรที่ใกล้เธอที่สุด 3 ตัวแรกมาอยู่รอบๆ เธอได้ ในระยะ (พื้นที่ 3x3 รอบตัว) สามารถนำยูนิตวางช่องใดๆ ก็ได้ หากไม่มีช่องจะเลือกวางช่องไหนก็ได้ที่ใกล้เธอที่สุด",
+    quote: "not all treasure is silver and gold.",
+    stats: [
+      { name: "ATK", val: 8 },
+      { name: "HP",  val: 6 },
+      { name: "RUN", val: 7 },
+      { name: "SPELL", val: 6 }
+    ]
+  },
+  {
+    name: "Z5",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "นักรบลึกลับผู้ไร้ชื่อ พลังของเขาซ่อนอยู่เบื้องหลังหน้ากาก ไม่มีใครรู้ว่าเขาต่อสู้เพื่อใคร",
+    stats: [
+      { name: "ATK", val: 7 },
+      { name: "HP",  val: 7 },
+      { name: "RUN", val: 6 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Alice Deane",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "แม่มดสาวผู้ถูกสาปให้อยู่ระหว่างความดีและความชั่ว พลังของเธอมาจากความมืดมิด แต่ใจยังคงแสวงหาแสงสว่าง",
+    ui: { atk: 2, hp: 1, run: 1, range: 3, spell: 12 },
+    skill: "ใช้ Spell 12 หน่วย เปิดประตูมิติจิตจากจุดที่เธอยืนอยู่ และเลือกจุดใดก็ได้ที่ไม่ใช่พื้นที่ว่างหรือสิ่งกีดขวางในแผนที่ จุดสองจุดนี้จะเชื่อมต่อกัน ยูนิตใดๆ ที่ยืนอยู่ในจุดนั้นจะถูกส่งข้ามไปยังอีกจุดทันที (ใช้สกิลจากหีบสมบัติไม่ได้)",
+    quote: "Farewell tom.",
+    stats: [
+      { name: "ATK", val: 3 },
+      { name: "HP",  val: 4 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 12 }
+    ]
+  },
+  {
+    name: "Thomas J Ward",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "Spook หนุ่มผู้ฝึกฝนเพื่อปกป้องโลกจากความมืด เขาต้องเผชิญกับสิ่งชั่วร้ายที่ซ่อนอยู่ในทุกเงามืด",
+    ui: { atk: 3, hp: 2, run: 1, spell: 2 },
+    skill: "ใช้ Spell 2 หน่วย กับศัตรูในระยะ (ช่องประชิด) เท่านั้น สร้างความเสียหาย 1 หน่วย และ Stun เป้าหมาย 2 เทิร์น เทิร์นแรกคือเทิร์นผู้ใช้สกิล เทิร์นที่สองคือเทิร์นของฝ่ายตรงข้าม เป้าหมายที่ถูกสตันจะไม่สามารถป้องกันได้",
+    quote: "Alice... why you.",
+    stats: [
+      { name: "ATK", val: 7 },
+      { name: "HP",  val: 7 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 2 }
+    ]
+  },
+  {
+    name: "Merlin",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "พ่อมดผู้ยิ่งใหญ่แห่งยุคอาเธอร์ ผู้เชี่ยวชาญศาสตร์เวทมนตร์สูงสุด ที่ปรึกษาของกษัตริย์และผู้พิทักษ์แห่ง Camelot",
+    ui: { atk: 2, hp: 3, run: 1, range: 3, spell: 3 },
+    skill: "สามารถใช้ Spell 3 แต้ม สร้างลูกไฟตกลงพื้น 1 ช่อง โดยไม่จำกัดระยะการใช้สกิล ทำให้ทุกยูนิตไม่สามารถเดินผ่านช่องนั้นได้ เป็นเวลา 3 เทิร์น นับเฉพาะเทิร์นของผู้ใช้สกิล และนับเทิร์นที่ใช้เป็นเทิร์นแรก",
+    quote: "you shall not pass.",
+    stats: [
+      { name: "ATK", val: 2 },
+      { name: "HP",  val: 6 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 3 }
+    ]
+  },
+  {
+    name: "Miyamoto Musashi",
+    born: "? มิถุนายน",
+    age: "???",
+    lore: "นักดาบผู้ยิ่งใหญ่ที่สุดแห่งญี่ปุ่น เจ้าแห่งสองดาบ ไม่เคยแพ้ในการดวลตลอดชีวิต 61 ครั้ง จิตใจของเขาสงบเหมือนผิวน้ำ แต่คมดาบดุจสายฟ้า",
+    ui: { atk: 3, hp: 4, run: 1, spell: 2 },
+    skill: "สามารถใช้ Spell 2 หน่วย พุ่งฟาดฟันเป็นเส้นตรงผ่านศัตรู 1 ตัวในระยะ (3 ช่องตรงหน้า) สร้างความเสียหายให้ศัตรู 3 หน่วย แล้ววางตัวเขาไว้หลังศัตรูตัวนั้น",
+    quote: "you must understand that there is more than one path to the top of the mountain.",
+    stats: [
+      { name: "ATK", val: 10 },
+      { name: "HP",  val: 7 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 2 }
+    ]
+  },
+  {
+    name: "Richard the Lionheart",
+    born: "8 กันยายน",
+    age: "???",
+    lore: "กษัตริย์อังกฤษผู้กล้าหาญ นำทัพครูเสดด้วยพลังใจและดาบอันทรงพลัง ผู้ที่แม้แต่ศัตรูก็ยังให้ความเคารพ",
+    ui: { atk: 3, hp: 3, run: 1, spell: 0 },
+    skill: "(ติดตัว) ยูนิตนี้ไม่สามารถถูกหยุดด้วยความสามารถหยุดการเคลื่อนที่ได้ และสามารถเดินผ่านจุดที่ใช้สกิลสร้างขึ้นเพื่อหยุดการเคลื่อนที่ได้ (เช่น ความสามารถของเมอร์ลิน) แต่ยังรับความเสียหายจากสกิลได้ตามปกติ",
+    quote: "the lion lives in the heart of every man.",
+    stats: [
+      { name: "ATK", val: 9 },
+      { name: "HP",  val: 9 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Hougan",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "นักบวชวูดูผู้เชื่อมระหว่างโลกมนุษย์กับโลกวิญญาณ เขาเรียกพลังจากบรรพบุรุษและควบคุมพลังลึกลับที่มนุษย์ทั่วไปไม่อาจเข้าใจ",
+    ui: { atk: 2, hp: 3, run: 1, spell: 3 },
+    skill: "ใช้ 🌀 3 หน่วยเพื่อคืนชีพยูนิตใดๆ ก็ได้ 1 ตัว ที่เพิ่งถูกสังหารไปในเทิร์นนี้ แต่ทุกยูนิตที่ถูกคืนชีพมาจะไม่สามารถใช้ความสามารถได้ และสร้างซอมบี้ได้ไม่จำกัด ในระยะ ⬜⬜🟥 แต่ถ้าหากเขาตาย ซอมบี้ทุกตัวจะถูกทำลาย",
+    quote: "my Zombies only eat brains don't worry you are safe.",
+    stats: [
+      { name: "ATK", val: 4 },
+      { name: "HP",  val: 6 },
+      { name: "RUN", val: 5 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Harald Bluetooth",
+    born: "? มกราคม",
+    age: "???",
+    lore: "กษัตริย์ไวกิ้งผู้รวบรวมเผ่าแห่งเหนือให้เป็นหนึ่ง ชื่อของเขายังคงดังก้องข้ามกาลเวลา แม้ยุคสมัยจะผ่านไปนานแค่ไหน",
+    ui: { atk: 3, hp: 1, run: 1, spell: 4 },
+    skill: "สามารถใช้ 🌀 4 หน่วย วางสกิลคืนชีพลงบนการ์ดใบนี้ เมื่อโดนความเสียหายจนถึงตาย จะเพิ่มพลังชีวิตและพลังโจมตีเป็น 5/5 หน่วย ความสามารถนี้ใช้ได้เพียงครั้งเดียวต่อเกมเท่านั้น",
+    quote: "better to fight and fall then live without hope.",
+    stats: [
+      { name: "ATK", val: 9 },
+      { name: "HP",  val: 8 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Ziito",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "นักสู้ลึกลับที่ไม่มีใครรู้ที่มา เคลื่อนไหวเงียบดุจเงา โจมตีรวดเร็วดุจสายลม ไม่มีใครรู้ว่าเขาจงรักภักดีต่อใคร",
+    ui: { atk: 1, hp: 4, run: 1, range: 2, spell: 4 },
+    skill: "สามารถใช้ 🌀 4 หน่วย เลือก Stun ยูนิตใดๆ ก็ได้ ไม่จำกัดระยะทาง ไม่จำกัดครั้ง ยูนิตที่ Stun ไม่สามารถป้องกัน หรือทำอะไรได้ จนกว่าจะถูกฝ่ายเดียวกันเองสั่งโจมตียูนิตนั้น แต่การโจมตีนั้นจะไม่สร้างความเสียหาย",
+    quote: "i am a wizard not a baboon brandishing a stick.",
+    stats: [
+      { name: "ATK", val: 8 },
+      { name: "HP",  val: 5 },
+      { name: "RUN", val: 8 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Drona",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "อาจารย์นักรบผู้ยิ่งใหญ่แห่งมหาภารตะ ผู้สอนวิชาอาวุธให้กับทั้งปาณฑพและเการพ เขาคือจุดสูงสุดของศาสตร์การรบ",
+    ui: { atk: 2, hp: 1, run: 2, range: 3, spell: 4 },
+    skill: "สามารถใช้ 🌀 4 หน่วย ยิงธนูสร้างความเสียหาย 1 หน่วยแก่ทุกยูนิตศัตรูทุกตัวเป็นเส้นตรง จากจุดที่เธอยืนอยู่ไปจนสุดขอบของกระดาน สามารถสร้างความเสียหายให้กับ Crystal ได้",
+    quote: "i see better from a distance.",
+    stats: [
+      { name: "ATK", val: 9 },
+      { name: "HP",  val: 8 },
+      { name: "RUN", val: 6 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Chalawan",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "จระเข้ยักษ์ผู้ทรงพลังจากตำนานไทย ครองแม่น้ำด้วยกำลังและเล่ห์เหลี่ยม ผู้ที่แม้แต่มนุษย์ผู้กล้าก็ยังต้องเกรงกลัว",
+    ui: { atk: 4, hp: 4, run: 2, spell: 4 },
+    skill: "เมื่ออยู่ในพื้นที่ว่าง สามารถใช้สกิลแปลงร่างเป็นจระเข้ยักษ์ได้ เพิ่ม ⚔️ และ ❤️ เป็น 7/8 แต่จะเคลื่อนที่ได้เฉพาะในพื้นที่ว่างเท่านั้น เมื่อใช้สกิลอีกครั้ง แปลงร่างกลับมาเป็นมนุษย์ ล้างความเสียหาย และรับค่าสถานะเดิม",
+    quote: "Death and war this will be delicious.",
+    stats: [
+      { name: "ATK", val: 10 },
+      { name: "HP",  val: 9 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Togo",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "นายพลเรือผู้ยิ่งใหญ่แห่งญี่ปุ่น นำกองทัพเรือสู่ชัยชนะอันยิ่งใหญ่ ยุทธวิธีของเขาถูกศึกษาและกล่าวขานมาจนถึงปัจจุบัน",
+    ui: { atk: 3, hp: 3, run: 1, spell: 0 },
+    skill: "(ติดตัว) หากพลังของ Crystal ฝั่งตนเอง ลดลงเหลือ 2 หน่วย เพิ่มความเร็วเคลื่อนที่ให้เป็น 2 หน่วย แต่หากพลังของ Crystal ลดลงจนเหลือ 1 หน่วย จะเพิ่มความเร็วเป็น 3 หน่วย และพลังโจมตีเป็น 5 จนกว่าพลังของ Crystal จะกลับมาเป็น 3 เท่าเดิม",
+    quote: "i am coming kid.",
+    stats: [
+      { name: "ATK", val: 6 },
+      { name: "HP",  val: 7 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "Dragon",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "มังกรโบราณผู้ตื่นขึ้นจากการหลับใหลนับพันปี ไฟของมันเผาผลาญทุกสิ่งที่ขวางหน้า ไม่มีอาวุธใดทะลุเกราะของมันได้",
+    stats: [
+      { name: "ATK", val: 10 },
+      { name: "HP",  val: 10 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 0 }
+    ]
+  },
+  {
+    name: "ครูซัตติราช",
+    born: "ไม่ทราบ",
+    age: "???",
+    lore: "ผู้ไม่มีชื่อ ผู้ไม่มีตัวตน เขาล่องลอยระหว่างโลกแห่งชีวิตและความตาย เข้าสิงร่างศัตรูแล้วใช้พลังของพวกเขาต่อสู้ ไม่มีใครรู้ว่าเขาคือใคร เพราะเขาคือทุกคน",
+     skill: "ใช้ 🌀 5 หน่วย เพื่อวาร์ปไปสร้างความเสียหาย 2 หน่วยให้ศัตรู 1 ตัว ในระยะ 4 ช่องเดิน หากสังหารได้จะ: เข้าสิง ยึดร่างของศัตรูและสามารถใช้สกิลของยูนิตนั้นได้ทันทีในเทิร์นนั้น โดยไม่เสียค่าใช้จ่ายสกิล หากตัวที่ถูกสิงตาย กลับคืนสถานะเดิม",
+    stats: [
+      { name: "ATK", val: 3 },
+      { name: "HP",  val: 4 },
+      { name: "RUN", val: 1 },
+      { name: "SPELL", val: 5 }
+    ]
+  },
+  {
+    name: "Odysseus",
+    born: "3 สิงหาคม",
+    age: "32",
+    lore: "วีรบุรุษผู้มีสติปัญญาเหนือกว่าทุกคน เดินทางผ่านมหาสมุทรที่เต็มไปด้วยสัตว์ประหลาด เทพเจ้า และคำสาป เขาพิสูจน์ว่าความฉลาดเอาชนะกำลังได้เสมอ",
+    ui: { atk: 2, hp: 2, run: 2, spell: 4 },
+    skill: "หากมี เพเนโลพี อยู่ในสนามอยู่แล้ว เขาจะสามารถใช้ 🌀 4 หน่วย เพื่อเพิ่ม ⚔️/❤️ เป็น 4/4 ให้กับทั้ง โอดิสเซียส และ เพเนโลพี โดยไม่สนว่าทั้งสองอยู่ฝ่ายไหน",
+    quote: "your sword is mine, my heart is your.",
+    stats: [
+      { name: "ATK", val: 8 },
+      { name: "HP",  val: 6 },
+      { name: "RUN", val: 6 },
+      { name: "SPELL", val: 4 }
+    ]
+  },
+  {
+    name: "แบล็คเบียด",
+    born: "? มกราคม",
+    age: "40",
+    lore: "เจ้าแห่งท้องทะเล ราชาโจรสลัดผู้น่าเกรงขาม เขาติดดาบเทียนไว้ที่ใบหน้าในยามศึก ทำให้ดูราวกับปีศาจลงมาจากนรก ไม่มีใครกล้าขวางเส้นทางของเขา",
+    ui: { atk: 2, hp: 3, run: 1, spell: 1 },
+    skill: "สามารถใช้ 🌀 1 แต้ม ทอยเต๋าเพื่อยิงปืนของเขาในระยะ: ⬜⬜⬜🟥 สร้างความเสียหาย 1 หน่วย แต่หากการทอยลูกเต๋าออกหน้า 1 หรือ 4 จะเป็นการสังหารเป้าหมายทันที ความเสียหายนี้มีผลกับ Crystal ได้",
+    quote: "I am the master of my fate, the captain of my soul.",
+    stats: [
+      { name: "ATK", val: 10 },
+      { name: "HP",  val: 8 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 1 }
+    ]
+  },
+  {
+    name: "Vlad Dracula Tepes",
+    born: "? พฤศจิกายน",
+    age: "???",
+    lore: "เจ้าชายแวมไพร์ผู้โหดเหี้ยมและเกรียงไกร ผู้ปกครองวาลาเคียด้วยกำปั้นเหล็ก เขาดื่มกินความกลัวของศัตรูเสมือนเลือดสด",
+    ui: { atk: 3, hp: 3, run: 1, spell: 2 },
+    skill: "ในทุกครั้งที่สังหารศัตรูได้ สามารถใช้ Spell 2 หน่วย ฟื้นพลังชีวิตจนเต็ม และเพิ่ม Atk และ HP ขึ้นอย่างละ 2 หน่วย ความสามารถนี้ไม่มีการจำกัดค่าสูงสุด หากพลังโจมตีเพิ่มจนถึง 10 หน่วย เพิ่ม Run ให้เป็น 2 หน่วย",
+    quote: "no one can stop me.",
+    stats: [
+      { name: "ATK", val: 9 },
+      { name: "HP",  val: 8 },
+      { name: "RUN", val: 4 },
+      { name: "SPELL", val: 2 }
+    ]
+  },
+]
+
+// ═══════════════════════════════════════
+//  ระบบ — ไม่ต้องแก้ตรงนี้
+// ═══════════════════════════════════════
+
+// ── Banner shrink on scroll ──
+const manualBar = document.getElementById('manualBar')
+const SHRINK_AT  = 80
+const RESET_AT   = 20
+
+function updateBannerOffset() {
+  document.body.style.paddingTop = manualBar.offsetHeight + 'px'
+}
+
+// ResizeObserver จับ height เปลี่ยนแบบ real-time ตลอด transition
+const barObserver = new ResizeObserver(() => {
+  document.body.style.paddingTop = manualBar.offsetHeight + 'px'
+})
+barObserver.observe(manualBar)
+
+function setShrunk(yes) {
+  if (yes) {
+    manualBar.classList.add('shrunk')
+  } else {
+    manualBar.classList.remove('shrunk')
+  }
+}
+
+window.addEventListener('scroll', () => {
+  const sy = window.scrollY
+  if (sy > SHRINK_AT) {
+    if (!manualBar.classList.contains('shrunk')) setShrunk(true)
+  } else {
+    if (manualBar.classList.contains('shrunk'))  setShrunk(false)
+  }
+}, { passive: true })
+
+updateBannerOffset()
+window.addEventListener('resize', updateBannerOffset)
+
+// ── Logo sticky on scroll ──
+const logoEl = document.getElementById('logo')
+const LOGO_STICKY_AT = 120
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > LOGO_STICKY_AT) {
+    logoEl.classList.add('logo-sticky')
+  } else {
+    logoEl.classList.remove('logo-sticky')
+  }
+}, { passive: true })
+
+// stars parallax
+const canvas = document.getElementById("particles")
+const ctx = canvas.getContext("2d")
+
+function resize() {
+  canvas.width = innerWidth
+  canvas.height = innerHeight
+}
+resize()
+window.addEventListener("resize", resize)
+
+let mouse = { x: innerWidth / 2, y: innerHeight / 2 }
+document.addEventListener("mousemove", e => {
+  mouse.x = e.clientX
+  mouse.y = e.clientY
+})
+
+const stars = []
+for (let i = 0; i < STAR_COUNT; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2.2,
+    depth: Math.random() * 2.5,
+    twinkle: Math.random() * Math.PI * 2
+  })
+}
+
+function animateStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  const t = Date.now() / 1000
+  stars.forEach(s => {
+    const dx = (mouse.x - canvas.width / 2) * 0.0005 * s.depth
+    const dy = (mouse.y - canvas.height / 2) * 0.0005 * s.depth
+    const alpha = 0.5 + 0.5 * Math.sin(t + s.twinkle)
+    ctx.beginPath()
+    ctx.arc(s.x + dx * 100, s.y + dy * 100, s.r, 0, Math.PI * 2)
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`
+    ctx.fill()
+  })
+  requestAnimationFrame(animateStars)
+}
+animateStars()
+
+// สร้างการ์ด
+const gallery = document.getElementById("gallery")
+
+images.forEach((src, idx) => {
+  const char = CHARACTER_DATA[idx] || { name: src.split("/")[1].split(".")[0] }
+
+  const card = document.createElement("div")
+  card.className = "card-img"
+  card.style.animationDelay = (idx * 0.09) + "s"
+  card.dataset.idx = idx
+
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="${src}" loading="lazy" alt="${char.name}">
+        <div class="card-name-tag">${char.name}</div>
+      </div>
+      <div class="card-back">
+        <div class="card-back-icon">✦</div>
+        <div class="card-back-name">${char.name}</div>
+        <div class="card-back-hint">คลิกเพื่อดูประวัติ</div>
+      </div>
+    </div>`
+
+  gallery.appendChild(card)
+})
+
+// 3D tilt
+document.querySelectorAll(".card-img").forEach(card => {
+  const inner = card.querySelector(".card-inner")
+
+  card.addEventListener("mouseenter", () => inner.classList.add("flip"))
+  card.addEventListener("mouseleave", () => {
+    inner.classList.remove("flip")
+    card.style.transform = ""
+  })
+  card.addEventListener("mousemove", e => {
+    const r = card.getBoundingClientRect()
+    const rx = -(e.clientY - r.top - r.height / 2) / 16
+    const ry = (e.clientX - r.left - r.width / 2) / 16
+    card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(1.04)`
+  })
+})
+
+// เปิด modal
+const charModal      = document.getElementById("charModal")
+const charBackdrop   = document.getElementById("charBackdrop")
+const charClose      = document.getElementById("charClose")
+const charMainImg    = document.getElementById("charMainImg")
+const charName       = document.getElementById("charName")
+const charClassLabel = document.getElementById("charClassLabel")
+const chipAtk        = document.getElementById("chipAtk")
+const chipHp         = document.getElementById("chipHp")
+const chipRun        = document.getElementById("chipRun")
+const chipSpell      = document.getElementById("chipSpell")
+const bioTags        = document.getElementById("bioTags")
+const infoGrid       = document.getElementById("infoGrid")
+const charLore       = document.getElementById("charLore")
+const statSection    = document.getElementById("statSection")
+const skillSection   = document.getElementById("skillSection")
+
+document.querySelectorAll(".card-img").forEach(card => {
+  card.addEventListener("click", () => {
+    openCharModal(parseInt(card.dataset.idx))
+  })
+})
+
+function openCharModal(idx) {
+  const char = CHARACTER_DATA[idx]
+  const src  = images[idx]
+
+  charModal.classList.remove("open")
+  void charModal.offsetWidth
+
+  charMainImg.src        = src
+  charName.textContent   = char.name || "—"
+  charClassLabel.textContent = "✦ CHARACTER FILE ✦"
+
+  // ค่า ATK/HP/RUN/SPELL บนรูป — ดึงจาก stats เสมอเพื่อความสม่ำเสมอกับหลอดสเต็ท
+  const getStat = name => char.stats?.find(s => s.name === name)?.val ?? (char.ui ? char.ui[name.toLowerCase()] : "—") ?? "—"
+  const atk   = getStat("ATK")
+  const hp    = getStat("HP")
+  const run   = getStat("RUN")
+  const spell = getStat("SPELL")
+  chipAtk.textContent   = atk
+  chipHp.textContent    = hp
+  chipRun.textContent   = run
+  chipSpell.textContent = spell
+
+  bioTags.innerHTML = ""
+  if (char.born) {
+    const t = document.createElement("div")
+    t.className = "bio-tag tag-date"
+    t.textContent = "🎂 " + char.born
+    bioTags.appendChild(t)
+  }
+  if (char.age) {
+    const t = document.createElement("div")
+    t.className = "bio-tag tag-age"
+    t.textContent = "🗓 อายุ " + char.age
+    bioTags.appendChild(t)
+  }
+
+  infoGrid.innerHTML = `
+    <div class="info-cell">
+      <div class="info-label">ชื่อ</div>
+      <div class="info-value">${char.name || "—"}</div>
+    </div>
+    <div class="info-cell">
+      <div class="info-label">วันเกิด</div>
+      <div class="info-value">${char.born || "—"}</div>
+    </div>
+    <div class="info-cell">
+      <div class="info-label">อายุ</div>
+      <div class="info-value">${char.age || "—"}</div>
+    </div>
+    <div class="info-cell">
+      <div class="info-label">สถานะ</div>
+      <div class="info-value">ATK ${atk} / HP ${hp} / RUN ${run}</div>
+    </div>`
+
+  charLore.textContent = char.lore || "ไม่มีข้อมูล"
+
+  // stat bars
+  if (char.stats && char.stats.length) {
+    const maxVal = Math.max(...char.stats.map(s => s.val), 10)
+    statSection.innerHTML = `
+      <div class="lore-title" style="opacity: 1">⚡ สถานะ</div>
+      ${char.stats.map(s => `
+        <div class="stat-row" data-stat="${s.name}">
+          <div class="stat-header">
+            <span>${s.name}</span>
+            <span>${s.val}</span>
+          </div>
+          <div class="stat-track">
+            <div class="stat-fill" style="--w: ${(s.val / maxVal) * 100}%"></div>
+          </div>
+        </div>`).join("")}`
+  } else {
+    statSection.innerHTML = ""
+  }
+
+  // skill section
+  if (char.skill) {
+    const uiChips = char.ui ? Object.entries(char.ui).map(([k, v]) =>
+      `<div class="skill-chip">${k.toUpperCase()} <span>${v}</span></div>`
+    ).join("") : ""
+
+    skillSection.innerHTML = `
+      <div class="lore-title" style="opacity: 1">✦ สกิล</div>
+      <div class="skill-box">
+        ${uiChips ? `<div class="skill-ui-row">${uiChips}</div>` : ""}
+        <div class="skill-desc">${char.skill}</div>
+        ${char.quote ? `<div class="skill-quote">"${char.quote}"</div>` : ""}
+      </div>`
+  } else {
+    skillSection.innerHTML = ""
+  }
+
+  charModal.style.display = "flex"
+  requestAnimationFrame(() => {
+    charModal.classList.add("open")
+  })
+  document.body.style.overflow = "hidden"
+}
+
+function closeCharModal() {
+  charModal.classList.remove("open")
+  document.body.style.overflow = ""
+  setTimeout(() => { charModal.style.display = "none" }, 500)
+}
+
+charClose.addEventListener("click", closeCharModal)
+charBackdrop.addEventListener("click", closeCharModal)
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeCharModal()
+})
+
+// ── Maze Logo BG Effect ──
+const MAZE_IMG_SRC = "IG/EFF.png"
+
+function spawnMazeGlyph() {
+  const el = document.createElement("img")
+  const size = 60 + Math.random() * 120
+  const x = Math.random() * (innerWidth  - size)
+  const y = Math.random() * (innerHeight - size)
+  const dur = 2800 + Math.random() * 2400
+  const rot = (Math.random() - 0.5) * 60
+
+  el.src = MAZE_IMG_SRC
+  el.style.cssText = `
+    position: fixed;
+    left: ${x}px;
+    top: ${y}px;
+    width: ${size}px;
+    height: ${size}px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    filter: invert(1) sepia(1) saturate(6) hue-rotate(300deg) brightness(1.3);
+  `
+
+  document.body.appendChild(el)
+
+  el.animate([
+    { opacity: 0,    transform: `rotate(${rot - 8}deg) scale(0.7)` },
+    { opacity: 0.75, transform: `rotate(${rot}deg)     scale(1)`,   offset: 0.35 },
+    { opacity: 0.55, transform: `rotate(${rot + 4}deg) scale(1.06)`,offset: 0.7  },
+    { opacity: 0,    transform: `rotate(${rot + 8}deg) scale(0.85)` }
+  ], { duration: dur, easing: "ease-in-out", fill: "forwards" })
+
+  setTimeout(() => el.remove(), dur)
+}
+setInterval(spawnMazeGlyph, SAKURA_INTERVAL)
+
+// เพลง
+const bgm      = document.getElementById("bgm")
+const musicBtn = document.getElementById("musicBtn")
+
+musicBtn.onclick = () => {
+  if (bgm.paused) {
+    bgm.play()
+    musicBtn.textContent = "⏸"
+  } else {
+    bgm.pause()
+    musicBtn.textContent = "▶"
+  }
+}
+
+</script>
+</body>
+</html>
